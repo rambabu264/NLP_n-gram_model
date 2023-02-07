@@ -29,7 +29,7 @@ class Extract_wiki(scrapy.Spider):
         content_tokens_wo_escape = [sent.translate(translator) for sent in content_tokens]
 
         # Removing all special characters
-        scraped_info = [re.sub('[^A-Za-z0-9]+', ' ', tokens) for tokens in content_tokens_wo_escape]
+        scraped_info = [re.sub('[^A-Za-z]+', ' ', tokens) for tokens in content_tokens_wo_escape]
 
         see_also_web = response.css('#mw-content-text li > a::attr(href)').extract()
         url = 'https://en.wikipedia.org'+random.choice(see_also_web)
@@ -38,6 +38,6 @@ class Extract_wiki(scrapy.Spider):
         yield {url: scraped_info}
 
         Extract_wiki.page_no += 1
-        if url is not None and Extract_wiki.page_no < 11:
+        if url is not None and Extract_wiki.page_no <= 21:
             print(url)
             yield response.follow(url, callback=self.parse)
