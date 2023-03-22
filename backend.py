@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from Autocompletion_and_spell_checking.autocompletion_and_spellchecker import trie_build, word_suggestion
 from N_Gram import N_Gram_pred
+from Semantic_Search.sem_search import run_search
 app = Flask(__name__)
 
 file_path = "D:\College\Packages\Wikipedia_scraping\wiki_scraper\extract_100.json"
@@ -29,8 +30,15 @@ def n_gram_model():
         sent = request.args.get('sent')
 
         file = "extracted.json"
-        corpus = N_Gram_pred.refresh_models(file)
+        #corpus = N_Gram_pred.refresh_models(file)
 
         txt = N_Gram_pred.get_prediction(sent)
 
         return jsonify({"Prediction:", txt})
+
+@app.route("/semantic", methods=["GET"])
+def semantic_search():
+    if request.method() == 'GET':
+        sent = request.args.get('sent')
+        ne, data = run_search(sent)
+        return jsonify({"Named Entities":ne, "Matched Data":data})
