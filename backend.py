@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from Autocompletion_and_spell_checking.autocompletion_and_spellchecker import trie_build, word_suggestion
+from Autocompletion_and_spell_checking.trie_data_structure import Trie 
 from N_Gram import N_Gram_pred
 from Semantic_Search.sem_search import run_search
 app = Flask(__name__)
