@@ -43,3 +43,5 @@ def semantic_search():
         sent = request.args.get('sent')
         ne, data = run_search(sent)
         return jsonify({"Named Entities":ne, "Matched Data":data})
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001, debug=True)
