@@ -7,17 +7,14 @@ import pinecone
 from tqdm.auto import tqdm
 from pprint import pprint
 
-def setup():
-    df = pd.read_feather("wiki-data-feather")
-    device = torch.cuda.current_device() if torch.cuda.is_available() else None
-    model_id = "dslim/bert-base-NER"
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForTokenClassification.from_pretrained(model_id)
-    nlp = pipeline("ner", model=model, tokenizer=tokenizer, aggregation_strategy="max", device=device)
-    retriever = SentenceTransformer('flax-sentence-embeddings/all_datasets_v3_mpnet-base', device=device)
-    pinecone.init(api_key="a0f2860f-74e5-4765-a635-ec380db5aee8", environment="us-central1-gcp")
-    index = pinecone.Index("ner-search")
-    return df, nlp, retriever, index
+df = pd.read_feather("wiki-data-feather")
+model_id = "dslim/bert-base-NER"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForTokenClassification.from_pretrained(model_id)
+nlp = pipeline("ner", model=model, tokenizer=tokenizer, aggregation_strategy="max")
+retriever = retriever = SentenceTransformer('flax-sentence-embeddings/all_datasets_v3_mpnet-base')
+pinecone.init(api_key="a0f2860f-74e5-4765-a635-ec380db5aee8", environment="us-central1-gcp")
+index = pinecone.Index("ner-search")
 
 def extract_named_entities(nlp, text_batch):
     # extract named entities using the NER pipeline
@@ -31,7 +28,7 @@ def extract_named_entities(nlp, text_batch):
 
 def search_pinecone(nlp, retriever, index, query):
     # extract named entities from the query
-    ne = extract_named_entities([query])[0]
+    ne = extract_named_entities(nlp,[query])[0]
     # create embeddings for the query
     xq = retriever.encode(query).tolist()
     # query the pinecone index while applying named entity filter
@@ -41,7 +38,6 @@ def search_pinecone(nlp, retriever, index, query):
     return ne, r
 
 def run_search(string):
-    df, nlp, retriever, index = setup()
     query = string
     ne, result = search_pinecone(nlp, retriever, index, query)
     data = []
