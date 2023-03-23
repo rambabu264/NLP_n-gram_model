@@ -5,7 +5,7 @@ from N_Gram import N_Gram_pred
 from Semantic_Search.sem_search import run_search
 app = Flask(__name__)
 
-file_path = "D:\College\Packages\Wikipedia_scraping\wiki_scraper\extract_100.json"
+file_path = "Wikipedia_scraping\wiki_scraper\extract_100.json"
 
 
 # @app.route("/home/<string:word>", methods=['GET'])
@@ -39,7 +39,7 @@ def n_gram_model():
 
 @app.route("/semantic", methods=["GET"])
 def semantic_search():
-    if request.method() == 'GET':
+    if request.method == 'GET':
         sent = request.args.get('sent')
         ne, data = run_search(sent)
         return jsonify({"Named Entities":ne, "Matched Data":data})

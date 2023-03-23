@@ -7,7 +7,7 @@ import pinecone
 from tqdm.auto import tqdm
 from pprint import pprint
 
-df = pd.read_feather("wiki-data-feather")
+df = pd.read_feather("Semantic_Search\wiki-data-feather")
 model_id = "dslim/bert-base-NER"
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForTokenClassification.from_pretrained(model_id)
